@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block title %}Excluir fruta{% endblock %}
+
+{% block content %}
+<section class="card form-card">
+    <h2>Excluir fruta</h2>
+    <p>Deseja remover <strong>{{ fruta.nome }}</strong> do estoque?</p>
+    <form method="post" class="acoes-form">
+        {% csrf_token %}
+        <a class="btn btn-light" href="{% url 'lista_frutas' %}">Cancelar</a>
+        <button class="btn btn-danger" type="submit">Sim, excluir</button>
+    </form>
+</section>
+{% endblock %}

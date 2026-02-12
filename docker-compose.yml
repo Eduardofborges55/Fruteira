@@ -1,10 +1,9 @@
-version: "3.9"
-
 services:
   web:
     build: .
     container_name: django_web
-    command: sh entrypoint.sh
+    working_dir: /app/app
+    command: sh /app/entrypoint.sh
     volumes:
       - .:/app
     ports:

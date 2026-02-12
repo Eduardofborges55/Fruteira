@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}Estoque da Feira{% endblock %}
+
+{% block content %}
+<section class="painel">
+    <article class="card metrica">
+        <span>Total de frutas</span>
+        <strong>{{ total_itens }}</strong>
+    </article>
+    <article class="card metrica">
+        <span>Quantidade em estoque</span>
+        <strong>{{ total_quantidade }}</strong>
+    </article>
+    <article class="card metrica alerta">
+        <span>Vencidas</span>
+        <strong>{{ vencidas }}</strong>
+    </article>
+    <article class="card metrica aviso">
+        <span>Vencem hoje</span>
+        <strong>{{ vencem_hoje }}</strong>
+    </article>
+    <article class="card metrica destaque">
+        <span>Próximas 7 dias</span>
+        <strong>{{ proximas_sete }}</strong>
+    </article>
+</section>
+
+<section class="card tabela-card">
+    <h2>Cadastro de frutas</h2>
+    {% if frutas %}
+    <div class="tabela-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Fruta</th>
+                    <th>Quantidade</th>
+                    <th>Validade</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fruta in frutas %}
+                <tr>
+                    <td>{{ fruta.nome }}</td>
+                    <td>{{ fruta.quantidade }}</td>
+                    <td>{{ fruta.validade|date:"d/m/Y" }}</td>
+                    <td>
+                        {% if fruta.status_validade == "vencida" %}
+                            <span class="tag vencida">Vencida</span>
+                        {% elif fruta.status_validade == "vence_hoje" %}
+                            <span class="tag hoje">Vence hoje</span>
+                        {% elif fruta.status_validade == "proxima" %}
+                            <span class="tag proxima">Próxima</span>
+                        {% else %}
+                            <span class="tag ok">Em dia</span>
+                        {% endif %}
+                    </td>
+                    <td class="acoes">
+                        <a class="btn btn-light" href="{% url 'editar_fruta' fruta.id %}">Editar</a>
+                        <a class="btn btn-danger" href="{% url 'excluir_fruta' fruta.id %}">Excluir</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <p class="vazio">Sem frutas cadastradas. Clique em <strong>Nova fruta</strong> para começar.</p>
+    {% endif %}
+</section>
+{% endblock %}
