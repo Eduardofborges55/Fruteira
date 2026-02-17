@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .forms import FrutaForm
-from .models import Fruta
+from .models import Fruta, StatusCiclo
 
 
 def lista_frutas(request):
@@ -15,10 +15,30 @@ def lista_frutas(request):
         "frutas": frutas,
         "total_itens": frutas.count(),
         "total_quantidade": sum(fruta.quantidade for fruta in frutas),
-        "vencidas": sum(1 for fruta in frutas if fruta.validade < hoje),
-        "vencem_hoje": sum(1 for fruta in frutas if fruta.validade == hoje),
+        "disponiveis": sum(
+            1 for fruta in frutas if fruta.status_ciclo == StatusCiclo.DISPONIVEL
+        ),
+        "promocao": sum(
+            1 for fruta in frutas if fruta.status_ciclo == StatusCiclo.PROMOCAO
+        ),
+        "apodrecendo": sum(
+            1 for fruta in frutas if fruta.status_ciclo == StatusCiclo.APODRECENDO
+        ),
+        "descartadas": sum(
+            1 for fruta in frutas if fruta.status_ciclo == StatusCiclo.DESCARTADA
+        ),
+        "vencidas": sum(
+            1 for fruta in frutas if fruta.validade is not None and fruta.validade < hoje
+        ),
+        "vencem_hoje": sum(
+            1
+            for fruta in frutas
+            if fruta.validade is not None and fruta.validade == hoje
+        ),
         "proximas_sete": sum(
-            1 for fruta in frutas if hoje < fruta.validade <= hoje + timedelta(days=7)
+            1
+            for fruta in frutas
+            if fruta.validade is not None and hoje < fruta.validade <= hoje + timedelta(days=7)
         ),
     }
     return render(request, "estoque/lista_frutas.html", context)

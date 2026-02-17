@@ -12,22 +12,26 @@
         <span>Quantidade em estoque</span>
         <strong>{{ total_quantidade }}</strong>
     </article>
-    <article class="card metrica alerta">
-        <span>Vencidas</span>
-        <strong>{{ vencidas }}</strong>
+    <article class="card metrica destaque">
+        <span>Disponiveis</span>
+        <strong>{{ disponiveis }}</strong>
     </article>
     <article class="card metrica aviso">
-        <span>Vencem hoje</span>
-        <strong>{{ vencem_hoje }}</strong>
+        <span>Em promocao</span>
+        <strong>{{ promocao }}</strong>
     </article>
-    <article class="card metrica destaque">
-        <span>Próximas 7 dias</span>
-        <strong>{{ proximas_sete }}</strong>
+    <article class="card metrica alerta">
+        <span>Apodrecendo</span>
+        <strong>{{ apodrecendo }}</strong>
+    </article>
+    <article class="card metrica">
+        <span>Descartadas</span>
+        <strong>{{ descartadas }}</strong>
     </article>
 </section>
 
 <section class="card tabela-card">
-    <h2>Cadastro de frutas</h2>
+    <h2>Ciclo das frutas</h2>
     {% if frutas %}
     <div class="tabela-wrap">
         <table>
@@ -35,9 +39,13 @@
                 <tr>
                     <th>Fruta</th>
                     <th>Quantidade</th>
-                    <th>Validade</th>
+                    <th>Chegada</th>
+                    <th>Promocao</th>
+                    <th>Apodrecimento</th>
+                    <th>Descarte</th>
+                    <th>Preco atual</th>
                     <th>Status</th>
-                    <th>Ações</th>
+                    <th>Acoes</th>
                 </tr>
             </thead>
             <tbody>
@@ -45,16 +53,20 @@
                 <tr>
                     <td>{{ fruta.nome }}</td>
                     <td>{{ fruta.quantidade }}</td>
-                    <td>{{ fruta.validade|date:"d/m/Y" }}</td>
+                    <td>{{ fruta.data_chegada|date:"d/m/Y"|default:"-" }}</td>
+                    <td>{{ fruta.data_promocao|date:"d/m/Y"|default:"-" }}</td>
+                    <td>{{ fruta.data_inicio_apodrecimento|date:"d/m/Y"|default:"-" }}</td>
+                    <td>{{ fruta.data_descarte|date:"d/m/Y"|default:"-" }}</td>
+                    <td>R$ {{ fruta.preco_atual }}</td>
                     <td>
-                        {% if fruta.status_validade == "vencida" %}
-                            <span class="tag vencida">Vencida</span>
-                        {% elif fruta.status_validade == "vence_hoje" %}
-                            <span class="tag hoje">Vence hoje</span>
-                        {% elif fruta.status_validade == "proxima" %}
-                            <span class="tag proxima">Próxima</span>
+                        {% if fruta.status_ciclo == "descartada" %}
+                            <span class="tag vencida">Descartada</span>
+                        {% elif fruta.status_ciclo == "apodrecendo" %}
+                            <span class="tag hoje">Apodrecendo</span>
+                        {% elif fruta.status_ciclo == "promocao" %}
+                            <span class="tag proxima">Promocao</span>
                         {% else %}
-                            <span class="tag ok">Em dia</span>
+                            <span class="tag ok">Disponivel</span>
                         {% endif %}
                     </td>
                     <td class="acoes">
@@ -67,7 +79,7 @@
         </table>
     </div>
     {% else %}
-    <p class="vazio">Sem frutas cadastradas. Clique em <strong>Nova fruta</strong> para começar.</p>
+    <p class="vazio">Sem frutas cadastradas. Clique em <strong>Nova fruta</strong> para comecar.</p>
     {% endif %}
 </section>
 {% endblock %}
