@@ -5,11 +5,13 @@ from django.utils import timezone
 
 from .forms import FrutaForm
 from .models import Fruta, StatusCiclo
+from .services import atualizar_ciclo_fruta, atualizar_ciclo_queryset
 
 
 def lista_frutas(request):
-    frutas = Fruta.objects.all()
     hoje = timezone.localdate()
+    atualizar_ciclo_queryset(Fruta.objects.exclude(status_ciclo=StatusCiclo.DESCARTADA), hoje)
+    frutas = Fruta.objects.all()
 
     context = {
         "frutas": frutas,
@@ -48,7 +50,9 @@ def criar_fruta(request):
     if request.method == "POST":
         form = FrutaForm(request.POST)
         if form.is_valid():
-            form.save()
+            fruta = form.save()
+            atualizar_ciclo_fruta(fruta, timezone.localdate())
+            fruta.save()
             return redirect("lista_frutas")
     else:
         form = FrutaForm()
@@ -65,7 +69,9 @@ def editar_fruta(request, fruta_id):
     if request.method == "POST":
         form = FrutaForm(request.POST, instance=fruta)
         if form.is_valid():
-            form.save()
+            fruta = form.save()
+            atualizar_ciclo_fruta(fruta, timezone.localdate())
+            fruta.save()
             return redirect("lista_frutas")
     else:
         form = FrutaForm(instance=fruta)
